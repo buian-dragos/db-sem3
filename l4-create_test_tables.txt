@@ -1,0 +1,70 @@
+-- Creating the Tests table
+CREATE TABLE Tests (
+    test_id INT PRIMARY KEY,
+    test_name VARCHAR(255),
+    test_description TEXT
+);
+
+-- Creating the Tables table
+CREATE TABLE Tables (
+    table_id INT PRIMARY KEY,
+    table_name VARCHAR(255),
+    table_description TEXT
+);
+
+-- Creating the TestTables junction table
+CREATE TABLE TestTables (
+	test_tables_id INT PRIMARY KEY,
+    test_id INT,
+    table_id INT,
+    no_of_rows INT,
+    FOREIGN KEY (test_id) REFERENCES Tests(test_id),
+    FOREIGN KEY (table_id) REFERENCES Tables(table_id)
+);
+
+-- Creating the Views table
+CREATE TABLE Views (
+    view_id INT PRIMARY KEY,
+    view_name VARCHAR(255),
+    view_description TEXT
+);
+
+-- Creating the TestViews junction table
+CREATE TABLE TestViews (
+	test_views_id INT PRIMARY KEY,
+    test_id INT,
+    view_id INT,
+    FOREIGN KEY (test_id) REFERENCES Tests(test_id),
+    FOREIGN KEY (view_id) REFERENCES Views(view_id)
+);
+
+-- Creating the TestRuns table
+CREATE TABLE TestRuns (
+    test_run_id INT PRIMARY KEY,
+    test_id INT,
+    start_at DATETIME,
+    end_at DATETIME,
+    FOREIGN KEY (test_id) REFERENCES Tests(test_id)
+);
+
+-- Creating the TestRunTables table for performance data of INSERT operations
+CREATE TABLE TestRunTables (
+    test_run_id INT,
+    table_id INT,
+    start_at DATETIME,
+    end_at DATETIME,
+    PRIMARY KEY (test_run_id, table_id),
+    FOREIGN KEY (test_run_id) REFERENCES TestRuns(test_run_id),
+    FOREIGN KEY (table_id) REFERENCES Tables(table_id)
+);
+
+-- Creating the TestRunViews table for performance data of SELECT operations on views
+CREATE TABLE TestRunViews (
+    test_run_id INT,
+    view_id INT,
+    start_at DATETIME,
+    end_at DATETIME,
+    PRIMARY KEY (test_run_id, view_id),
+    FOREIGN KEY (test_run_id) REFERENCES TestRuns(test_run_id),
+    FOREIGN KEY (view_id) REFERENCES Views(view_id)
+);
